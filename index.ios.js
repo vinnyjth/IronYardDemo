@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated,
 } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -43,7 +44,11 @@ const styles = StyleSheet.create({
     margin: 20,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+  },
 });
 
 class TappableBox extends Component {
@@ -52,47 +57,82 @@ class TappableBox extends Component {
     this.state = {
       selected: false,
     };
+    this.animatedValue = new Animated.Value(0);
+  }
+
+  animate() {
+    const grow = Animated.spring(
+      this.animatedValue,         // Auto-multiplexed
+      {
+        toValue: 1,
+        tension: 70,
+        friction: 5,
+        useNativeDriver: true,
+      } // Back to zero
+    );
+    const shrink = Animated.spring(
+      this.animatedValue,         // Auto-multiplexed
+      {
+        toValue: 0,
+        tension: 100,
+        useNativeDriver: true,
+      } // Back to zero
+    );
+    Animated.sequence([grow, shrink]).start();
+  }
+
+  handlePress() {
+    const { onPress, number } = this.props;
+    this.animate();
+    onPress(number);
   }
 
   render() {
-    const { color='red', tapColor='blue', text='A box!'} = this.props;
+    const { color='red', number } = this.props;
     const { selected } = this.state;
 
-    const backgroundColor = selected ? tapColor : color;
+    const scale = this.animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 1.5],
+    });
+
     return (
-      <TouchableOpacity onPress={() => this.setState({ selected: !selected })}>
-        <View style={[styles.box, { backgroundColor } ]}>
-          <Text>{text}</Text>
-        </View>
+      <TouchableOpacity onPress={() => this.handlePress()}>
+        <Animated.View style={[styles.box, { backgroundColor: color },  { transform: [ { scale } ] }]}>
+          <Text style={styles.buttonText}>{number}</Text>
+        </Animated.View>
       </TouchableOpacity>
     );
   }
 }
 
 export default class IronYardDemo extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      value: 0,
+    }
+  }
+  handlePress(number){
+    const { value } = this.state;
+    this.setState({ value: value + number });
+  }
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
+          {this.state.value}
         </Text>
         <View style={styles.boxContainer}>
-          <TappableBox/>
-          <TappableBox/>
-          <TappableBox/>
-          <TappableBox/>
-          <TappableBox/>
-          <TappableBox/>
-          <TappableBox/>
-          <TappableBox/>
-          <TappableBox/>          
+          <TappableBox number={1} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={2} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={3} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={4} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={5} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={6} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={7} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={8} onPress={(n) => this.handlePress(n)}/>
+          <TappableBox number={9} onPress={(n) => this.handlePress(n)}/>
         </View>
       </View>
     );
