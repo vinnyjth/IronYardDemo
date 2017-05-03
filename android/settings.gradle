@@ -1,0 +1,3 @@
+rootProject.name = 'IronYardDemo'
+
+include ':app'
