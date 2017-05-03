@@ -9,27 +9,9 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
-
-export default class IronYardDemo extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
-    );
-  }
-}
 
 const styles = StyleSheet.create({
   container: {
@@ -48,6 +30,73 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  boxContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  box: {
+    width: 100,
+    height: 50,
+    borderRadius: 20,
+    margin: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
+
+class TappableBox extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: false,
+    };
+  }
+
+  render() {
+    const { color='red', tapColor='blue', text='A box!'} = this.props;
+    const { selected } = this.state;
+
+    const backgroundColor = selected ? tapColor : color;
+    return (
+      <TouchableOpacity onPress={() => this.setState({ selected: !selected })}>
+        <View style={[styles.box, { backgroundColor } ]}>
+          <Text>{text}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}
+
+export default class IronYardDemo extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Welcome to React Native!
+        </Text>
+        <Text style={styles.instructions}>
+          To get started, edit index.ios.js
+        </Text>
+        <Text style={styles.instructions}>
+          Press Cmd+R to reload,{'\n'}
+          Cmd+D or shake for dev menu
+        </Text>
+        <View style={styles.boxContainer}>
+          <TappableBox/>
+          <TappableBox/>
+          <TappableBox/>
+          <TappableBox/>
+          <TappableBox/>
+          <TappableBox/>
+          <TappableBox/>
+          <TappableBox/>
+          <TappableBox/>          
+        </View>
+      </View>
+    );
+  }
+}
 
 AppRegistry.registerComponent('IronYardDemo', () => IronYardDemo);
